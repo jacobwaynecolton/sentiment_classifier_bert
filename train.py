@@ -21,14 +21,17 @@ def tokenize(data):
 # Using the custom tokenize function to map the dataset
 tokenized_ds = ds.map(tokenize, batched=True)
 
+# Formatting the dataset for pytorch
+tokenized_ds.set_format("torch")
+
 # Here I am creating my own training loop. However, this is just for practice
 
 # Initializing the optimizer
-optimizer = torch.optim.AdamW(model.parameters)
+optimizer = torch.optim.AdamW(model.parameters())
 
 # Using data loader to batch the data, and setting shuffle to be on (to prevent the model from learning
 # extraneous patterns)
-loaded_data = torch.utils.data.DataLoader(tokenized_ds["train"], shuffle=True)
+loaded_data = torch.utils.data.DataLoader(tokenized_ds["train"], batch_size = 16,shuffle=True)
 
 # Training loop
 for epoch in range(3):
@@ -40,12 +43,12 @@ for epoch in range(3):
         # Calculating the loss on the outputs
         loss = outputs.loss
         # Backpropagating the loss
-        loss.backwards()
+        loss.backward()
         # Pushing the optimizer one step forward
         optimizer.step()
 
 # Saving the model after training
 model.save_pretrained("./model")
-tokenizer.save_pretrained("./model")
+bert_tokenizer.save_pretrained("./model")
 
 
