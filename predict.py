@@ -18,6 +18,7 @@ while True:
 
     # Turning off computational graph generation
     with torch.no_grad():
+        print(sentence)
         inputs = tokenizer(sentence,return_tensors="pt")
         outputs = model(**inputs)
         probs = F.softmax(outputs.logits, dim=-1)

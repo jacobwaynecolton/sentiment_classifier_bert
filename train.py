@@ -29,10 +29,8 @@ tokenized_ds = tokenized_ds.rename_column("label", "labels")
 # Formatting the dataset for pytorch
 tokenized_ds.set_format("torch")
 
-# Here I am creating my own training loop. However, this is just for practice
-
 # Initializing the optimizer
-optimizer = torch.optim.AdamW(model.parameters())
+optimizer = torch.optim.AdamW(model.parameters(),lr=2e-5)
 
 # Setting up a collator
 collator = DataCollatorWithPadding(tokenizer=bert_tokenizer)
@@ -49,6 +47,7 @@ model.to(device)
 # Training loop
 for epoch in range(3):
     print(f"Epoch {epoch+1}/3")
+    total_loss = 0
     for batch in tqdm(loaded_data):
         # Moving batch items to gpu
         batch = {k: v.to(device) for k, v in batch.items()}
@@ -62,6 +61,11 @@ for epoch in range(3):
         loss.backward()
         # Pushing the optimizer one step forward
         optimizer.step()
+        # keeping track of total loss
+        total_loss += loss.item()
+    # displaying the average loss
+    avg_loss = total_loss / len(loaded_data)
+    print(f"Average loss: {avg_loss:.4f}")
 
 # Saving the model after training
 model.save_pretrained("./model")
