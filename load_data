@@ -1,0 +1,6 @@
+from datasets import load_dataset
+
+"""Loading the dataset sst2 (The Stanford Sentiment Treebank is a corpus with
+    fully labeled parse trees that allows for a complete analysis of the compositional 
+    effects of sentiment in language.stanford sentiment analysis from movie reviews)"""
+ds = load_dataset(stanfordnlp/sst2)
