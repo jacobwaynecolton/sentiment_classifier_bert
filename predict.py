@@ -1,5 +1,6 @@
 import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import torch.nn.functional as F
 
 
 
@@ -19,6 +20,9 @@ while True:
     with torch.no_grad():
         inputs = tokenizer(sentence,return_tensors="pt")
         outputs = model(**inputs)
-        prediction = outputs.logits.argmax(dim=-1)
-        print(prediction)
-        
+        probs = F.softmax(outputs.logits, dim=-1)
+        prediction = probs.argmax(dim=-1).item()
+        confidence = probs[0][prediction].item()
+    
+        labels = {0: "negative", 1: "positive"}
+        print(f"{labels[prediction]} ({confidence:.0%} confidence)")
